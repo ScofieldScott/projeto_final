@@ -11,6 +11,11 @@ const server = http.createServer((req, res) => {
     if(pathname === '/' || pathname === '/homePage'){
         //res.writeHead(2--, {'Content-type': 'text/html'});
         res.end('This the home page!');
+    }else{
+        res.writeHead(404, {
+            'Content-type' : 'text/html'
+        });
+        res.end('<h1>Page not found!</h1>');
     }
 });
 
