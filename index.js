@@ -1,22 +1,25 @@
-const fs = require('fs');
-const express = require('express');
-const morgan = require('morgan');
+const express = require('express')
+const mustacheExpress = require('mustache-express')
+const db = require('./src/db')
 
-const usersRouter = require('./Routes/usersRouts');
-const app = express();
+const app = express()
 
-//MIDDLEWARES
-app.use(morgan('dev'));
-app.use(express.json());
-const dataObj = JSON.parse(data);
+app.engine('html', mustacheExpress())
+app.set('view engine', 'html')
+app.set('views', __dirname + '/src/views')
 
-app.use((req, res, next) => {
-    req.requesteTime = new Date().toISOString();
-    next();
-});
+app.use(express.urlencoded({extended: true}))
 
-//ROUTE HANDLERS
-app.use('/api/v1/users', usersRouter);
+// Define as rotas da aplicação (declaradas na pasta /src/routes/)
+app.use('/', require('./src/routes/pessoaRoutes'));
+app.use('/', require('./src/routes/indexRoutes'));
+app.use('/', require('./src/routes/autenticaRoutes'));
+app.use('/', require('./src/routes/contaRoutes'));
+app.use('/', require('./src/routes/movimentoRoutes'));
 
-//START SERVER
-module.exports = app;
+db.sync(() => console.log(`Banco de dados conectado`));
+
+const app_port = 8000
+app.listen(app_port, function () {
+    console.log('app rodando na porta ' + app_port)
+})
